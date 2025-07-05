@@ -1,0 +1,18 @@
+commands
+
+wprui.exe 
+
+wpr -start generalprofile -filemode
+wpr -cancel
+wpr -stop demo.etl
+
+
+#HEAP
+reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\ObjectCreationDemo.exe" /v TracingFlags /t REG_DWORD /d 1 /f
+wpr.exe -start Heap -filemode
+
+#performance
+wpr.exe -start GeneralProfile -start simple_demo.WPRP
+
+simple_event_tracing_demo.exe
+wpr.exe -stop simple_demo.etl
