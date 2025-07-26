@@ -8,6 +8,18 @@
 #include <string>
 #include <windows.h>
 
+
+/*! \file
+* \brief Hung thread which will exit after a short while - this is done in order to simulate long running execution
+*
+*	You will see the thread id and use it on  WPA.
+*  - Execution:
+*    -# wpr -start generalprofile
+*    -# HungThreadConsumerProducer.exe
+*    -# wpr -stop hugconsumerproducer.etl
+*/
+
+
 void SetThreadName(const std::string& name) {
     const DWORD MS_VC_EXCEPTION = 0x406D1388;
 #pragma pack(push,8)
@@ -67,7 +79,7 @@ void consumer(int id, bool hang = false) {
             std::cout << "[Consumer " << id << "] HANGING on task " << task << "\n";
             auto start = std::chrono::steady_clock::now();
             bool time_passed = false;
-            while (not time_passed)
+            while (time_passed==false)
             {
                 auto end = std::chrono::steady_clock::now();
                 time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() >= 2000;

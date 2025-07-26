@@ -3,6 +3,27 @@
 #include <thread>
 #include <chrono>
 
+
+
+
+/*! \file
+* \brief See object creation issues and diagnose it.
+*
+*	You will see the thread id and use it on  WPA.
+*   Please see https://learn.microsoft.com/en-us/troubleshoot/windows-server/support-tools/support-tools-xperf-wpa-wpr for registry key
+* 	Please make sure you add key 
+*   <i>reg add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\ObjectCreationDemo.exe" /v TracingFlags /t REG_DWORD /d 1 /f</i>
+*
+*  - Execution:
+*    -# wpr -start Heap -filemode
+*    -# ObjectCreationDemo.exe
+*    -# wpr -stop objectcreationdemo.etl
+*/
+
+/*! object we create
+* if the id is modulated by 5 it will allocate a large meory heap
+*
+*/
 class DemoObject {
 public:
     DemoObject(int id) : id(id) {

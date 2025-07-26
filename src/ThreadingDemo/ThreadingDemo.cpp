@@ -1,9 +1,21 @@
+
+
 #include <iostream>
 #include <thread>
 #include <vector>
 #include <chrono>
 #include <string>
 #include <windows.h>
+
+/*! \file
+* \brief We will hung one thread - you can see it not exiting.
+*
+*	You will see the thread id and use it on  WPA.
+*  - Execution:
+*    -# wpr -start generalprofile
+*    -# ThreadingDemo.exe
+*    -# wpr -stop threading_demo.etl
+*/
 
 // Helper to set the thread name on Windows (visible in WPA)
 void SetThreadName(const std::string& name) {
@@ -27,7 +39,7 @@ void SetThreadName(const std::string& name) {
     }
     __except (EXCEPTION_EXECUTE_HANDLER) {}
 }
-
+ //! Regular worker.
 void worker(int id) {
     std::string name = "WorkerThread_" + std::to_string(id);
     SetThreadName(name);
@@ -37,6 +49,7 @@ void worker(int id) {
     std::cout << "[" << name << "] Finished.\n";
 }
 
+ //! Hunging worker.
 void hangingThread() {
     SetThreadName("HangingThread");
 

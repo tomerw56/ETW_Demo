@@ -1,17 +1,21 @@
-// TraceLoggerSingleton.h
+/*! \file TraceLoggerSingleton.h
+* \brief holds the singelton for loggig events.
+*
+* <b>Note that we use the same guid and name 'SimpleTraceLoggingProvider' in simple_demo.WPRP</b>
+*/
 
 #pragma once
 #include <windows.h>
 #include <traceloggingprovider.h>
 
-// Forward-declare the g_hMyComponentProvider variable that you will use for tracing in this component
+/* Forward-declare the g_hMyComponentProvider variable that you will use for tracing in this component*/
 TRACELOGGING_DECLARE_PROVIDER(g_hMyComponentProvider);
 #include <string>
 #include <mutex>
 #include <chrono>
 #include <type_traits>
-//#include "SimpleTraceLoggingExample.h"
 
+/*! The Guid and name we use on  simple_demo.WPRP*/
 TRACELOGGING_DEFINE_PROVIDER(
     g_hMyComponentProvider,     // name of the global handle
     "SimpleTraceLoggingProvider",    // provider name
@@ -24,13 +28,16 @@ struct EventData {
     const char* comment;
 } ;
 
+/*! The actual log
+* <b>Please note the fixed strings need!</b>
+ */
 class TraceLoggerSingleton {
 public:
     static TraceLoggerSingleton& Instance() {
         static TraceLoggerSingleton instance;
         return instance;
     }
-
+	/*singelton pattern*/
     void Init() {
         std::lock_guard<std::mutex> lock(mutex_);
 

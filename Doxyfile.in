@@ -1,0 +1,18 @@
+PROJECT_NAME           = "WPADemo"
+OUTPUT_DIRECTORY       = @DOXYGEN_OUTPUT_DIR@
+INPUT                  = @DOXYGEN_INPUT_DIR@
+RECURSIVE              = YES
+
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+
+EXTRACT_ALL            = YES
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = @CMAKE_SOURCE_DIR@/src
+
+SHOW_DIRECTORIES       = YES
+DIRECTORY_GRAPH        = YES
+OPTIMIZE_OUTPUT_FOR_C  = NO
+
+# Optional (nice style)
+GENERATE_TREEVIEW      = YES
