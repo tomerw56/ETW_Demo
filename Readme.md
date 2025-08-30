@@ -17,5 +17,3 @@ cmake --build . --target doc_doxygen   # generate docs
 ```
 
 this will generate a build folder with debug and release folder
-
-

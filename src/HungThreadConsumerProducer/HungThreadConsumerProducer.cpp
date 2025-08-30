@@ -15,30 +15,22 @@
 *	You will see the thread id and use it on  WPA.
 *  - Execution:
 *    -# wpr -start generalprofile
-*    -# HungThreadConsumerProducer.exe
+*    -# HungThreadConsumerProducer.exe ->hit a key
 *    -# wpr -stop hugconsumerproducer.etl
 */
 
 
-void SetThreadName(const std::string& name) {
-    const DWORD MS_VC_EXCEPTION = 0x406D1388;
-#pragma pack(push,8)
-    struct THREADNAME_INFO {
-        DWORD dwType = 0x1000;
-        LPCSTR szName;
-        DWORD dwThreadID;
-        DWORD dwFlags = 0;
-    };
-#pragma pack(pop)
-
-    THREADNAME_INFO info;
-    info.szName = name.c_str();
-    info.dwThreadID = GetCurrentThreadId();
-   
-    __try {
-        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+void long_running_task(int id,int task)
+{
+    std::cout << "[Consumer " << id << "] HANGING on task " << task << "\n";
+    auto start = std::chrono::steady_clock::now();
+    bool time_passed = false;
+    while (time_passed == false)
+    {
+        auto end = std::chrono::steady_clock::now();
+        time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() >= 2000;
     }
-    __except (EXCEPTION_EXECUTE_HANDLER) {}
+    std::cout << "HUNG Passed\n";
 }
 
 std::queue<int> taskQueue;
@@ -48,7 +40,7 @@ std::mutex sharedMutex;
 bool done = false;
 
 void producer(int id) {
-    SetThreadName("Producer_" + std::to_string(id));
+    
 
     for (int i = 0; i < 5; ++i) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -62,8 +54,10 @@ void producer(int id) {
 }
 
 void consumer(int id, bool hang = false) {
-    SetThreadName("Consumer_" + std::to_string(id));
+    
     DWORD thread_id = GetCurrentThreadId();
+    std::cout << "[Consumer " << id << "] " << thread_id  << "\n";
+
     while (true) {
         std::unique_lock<std::mutex> lock(queueMutex);
         cv.wait(lock, [] { return !taskQueue.empty() || done; });
@@ -76,15 +70,7 @@ void consumer(int id, bool hang = false) {
         std::cout << "[Consumer " << id << "]" << thread_id <<"Consumed task " << task << "\n";
 
         if (hang && task % 2 == 0) {
-            std::cout << "[Consumer " << id << "] HANGING on task " << task << "\n";
-            auto start = std::chrono::steady_clock::now();
-            bool time_passed = false;
-            while (time_passed==false)
-            {
-                auto end = std::chrono::steady_clock::now();
-                time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() >= 2000;
-            }
-            std::cout << "HUNG Passed\n";
+            long_running_task(id, task);
         }
 
 
@@ -96,6 +82,9 @@ void consumer(int id, bool hang = false) {
 int main() {
     const int numProducers = 2;
     const int numConsumers = 3;
+    std::cout << "start etw and hit key to continue"<<std::endl;
+
+    getchar();
 
     std::vector<std::thread> threads;
 

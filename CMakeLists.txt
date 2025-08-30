@@ -19,6 +19,17 @@ foreach(SRC_FILE IN LISTS CPP_FILES)
     set_target_properties(${FILE_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
     )
+	 # Link special libraries if this is the GPU demo
+    if(FILE_NAME STREQUAL "gpu_demo")
+        target_link_libraries(${FILE_NAME}
+            d3d11 dxgi d3dcompiler user32 gdi32
+        )
+        target_compile_definitions(${FILE_NAME} PRIVATE NOMINMAX)
+		# Tell MSVC this is a Win32 subsystem (uses WinMain, not main)
+		set_target_properties(${FILE_NAME} PROPERTIES
+			WIN32_EXECUTABLE TRUE
+		)
+    endif()
 
     # Optionally, copy the exe to OUTPUT_DIR explicitly after build
     add_custom_command(TARGET ${FILE_NAME} POST_BUILD

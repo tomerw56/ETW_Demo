@@ -16,48 +16,35 @@
 *    -# ThreadingDemo.exe
 *    -# wpr -stop threading_demo.etl
 */
-
-// Helper to set the thread name on Windows (visible in WPA)
-void SetThreadName(const std::string& name) {
-    const DWORD MS_VC_EXCEPTION = 0x406D1388;
-#pragma pack(push,8)
-    struct THREADNAME_INFO {
-        DWORD dwType = 0x1000;
-        LPCSTR szName;
-        DWORD dwThreadID;
-        DWORD dwFlags = 0;
-    };
-#pragma pack(pop)
-
-    THREADNAME_INFO info;
-    info.szName = name.c_str();
-    info.dwThreadID = GetCurrentThreadId();
-    std::cout << " thread data [" << name << "] "<<" - - "<<info.dwThreadID <<"\n";
-
-    __try {
-        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
-    }
-    __except (EXCEPTION_EXECUTE_HANDLER) {}
-}
  //! Regular worker.
 void worker(int id) {
+    DWORD thread_id = GetCurrentThreadId();
     std::string name = "WorkerThread_" + std::to_string(id);
-    SetThreadName(name);
-
+    std::cout  << name << " " << thread_id << "\n";
     std::cout << "[" << name << "] Doing work...\n";
     std::this_thread::sleep_for(std::chrono::milliseconds(500 + id * 100));
     std::cout << "[" << name << "] Finished.\n";
 }
 
+
+void unterminated_function()
+{
+    while (true) {}
+}
+
+
  //! Hunging worker.
 void hangingThread() {
-    SetThreadName("HangingThread");
+    
+    DWORD thread_id = GetCurrentThreadId();
+    
+    std::cout << "hung thread" << " " << thread_id << "\n";
 
     std::cout << "[HangingThread] Started and will hang.\n";
 
     // Simulate a hang — infinite sleep
+    unterminated_function();
    
-    while(true) {}
 }
 
 int main() {
