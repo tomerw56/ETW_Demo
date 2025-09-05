@@ -48,7 +48,7 @@ public:
         }
     }
 
-  void WriteControlEvent(const std::string& comment) {
+  void WriteControlEvent(const std::string& comment,DWORD& thread_id) {
         std::lock_guard<std::mutex> lock(mutex_);
 
         if (!initialized_) return;
@@ -65,6 +65,7 @@ public:
             TraceLoggingStruct(2, "EventData"),
             TraceLoggingString(event_data.comment, "comment"),
             TraceLoggingUInt32(event_data.unix_time_stamp, "unix_time_stamp"),
+            TraceLoggingUInt32(thread_id, "thread_id"),
             TraceLoggingPointer(&event_data, "ControlEventData")
         );
 
@@ -72,7 +73,7 @@ public:
     }
 
     template<typename T>
-    void WriteValueEvent( const T& value) {
+    void WriteValueEvent( const T& value, DWORD& thread_id) {
         static_assert(
             std::is_same<T, bool>::value ||
             std::is_same<T, int>::value ||
@@ -86,7 +87,9 @@ public:
         TraceLoggingWrite(
             g_hMyComponentProvider,
             "Value",
+            TraceLoggingUInt32(thread_id, "thread_id"),
             TraceLoggingValue(value, "key1")
+
         );
     }
 
